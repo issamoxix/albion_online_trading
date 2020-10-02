@@ -1,4 +1,4 @@
-#saving the prices in the database from the carlion market
+#saving the prices in the database from the carlion market 
 from PIL import Image
 import pytesseract as ptt
 ptt.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'

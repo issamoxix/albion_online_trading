@@ -1,4 +1,5 @@
 #all_0_normal
+#compare the carlio prices to the market's 
 #checking profite
 import pyautogui as gui	
 from PIL import Image
