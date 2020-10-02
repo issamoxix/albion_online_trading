@@ -14,6 +14,8 @@ class data:
 	def __init__(self):
 		self.tr=5
 		self.eh=1
+		self.dbc=mysql.connector.connect(host='localhost',user='root',passwd="",database='albion')
+
 	def im_st(self, file1,file2):
 		x=[]
 		im1=Image.open(file1)
@@ -35,7 +37,10 @@ class data:
 		x.append(tt1)
 		x.append(toc)
 		print(x)
-		self.db(x[0],x[1],self.tr, self.eh)
+		if x[1]==0 or x[1]=='':
+			print('Slots are Empty !!!')
+		else:	
+			self.db(x[0],x[1],self.tr, self.eh)
 	#sx , sy and sz refered to serial x y z of the image file bm1_1 bm1_2
 	#there is only 2 _1 _2 but the first number after _ can change 
 	# like 7_1 7_2
@@ -100,12 +105,11 @@ class data:
 			self.im_st(file1,file2)
 	#insert data to the database
 	def db(self,item,price,tier,ench):
-		db=mysql.connector.connect(host='localhost',user='root',passwd="",database='albion')
-		ex=db.cursor()
+		ex=self.dbc.cursor()
 		sql="INSERT INTO items (name, price, tier,ench)values(%s,%s,%s,%s)"
 		val=(item,price,tier,ench)
 		ex.execute(sql, val)
-		db.commit()
+		self.dbc.commit()
 		print(ex.rowcount, 'Data entered')
 	def tier(self):
 		x=gui.locateOnScreen('img/all_btn.png')
@@ -178,20 +182,20 @@ class data:
 		x=512
 		y=221
 		ye=239
-		gui.click(x,y)
+		gui.moveTo(x,y)
 		time.sleep(0.4)
-		gui.click(x,ye)
+		gui.moveTo(x,ye)
 		time.sleep(0.4)
-		gui.click(700,y)
+		gui.moveTo(700,y)
 		time.sleep(0.4)
-		gui.click(700,ye)
+		gui.moveTo(700,ye)
 
 
 # data=data()
 # data.tier()
 data= data()
-items=['hunter hood']
+items=['spirithunter']
 for i in items:
-	cc.item(i)
+	cc.item(i,0)
 	time.sleep(0.2)
 	data.tier()

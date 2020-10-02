@@ -7,10 +7,12 @@ ptt.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 import time
 import mysql.connector
 import cc
+import sys
 class prof:
 	def __init__(self):
 			self.tr=0
 			self.eh=0
+			self.dbs=mysql.connector.connect(host='localhost', user='root', passwd='',database='albion')
 	def machidaba(self):
 			x_1_s=300
 			y_1_s=360-55
@@ -49,12 +51,16 @@ class prof:
 			print('price: '+str(toc))
 			print('Tier: '+str(self.tr))
 			print('Ench: '+str(self.eh))
-			taxe=float(toc)*0.06
+			try:
+				taxe=float(toc)*0.06
+			except:
+				taxe=0
+				pass
 			print('Taxe: '+str(taxe))
 			print('#########Carlion market#############')
 			if oo!=0:
-				dbs=mysql.connector.connect(host='localhost', user='root', passwd='',database='albion')
-				ex=dbs.cursor()
+				
+				ex=self.dbs.cursor()
 				sql="SELECT * from items WHERE name REGEXP '"+str(lo)+"' AND tier="+str(self.tr)+" AND ench="+str(self.eh)+" "
 				ex.execute(sql)
 				row=ex.fetchall()
@@ -65,7 +71,11 @@ class prof:
 						print('No Price !!')
 						profite=0
 					else:
-						profite=float(toc)-float(row[0][1])-float(taxe)
+						try:
+							profite=float(toc)-float(row[0][1])-float(taxe)
+						except:
+							profite= 0
+							pass
 				else:
 					profite=0
 			else:
@@ -74,17 +84,19 @@ class prof:
 				print('NIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIICE !!!!')
 				# gui.alert(text='Tier : '+str(self.tr)+'\n Ench : '+str(self.eh)+'\n Profite : '+str(profite),title='Profite !!',button='Ok')
 				file =open('../bm/prof.txt','a')
-				file.write('\n ############# '+'\nCarlio PRICE => '+str(row[0][1])+'\n Tier : '+str(self.tr)+'\n Ench : '+str(self.eh)+'\n Price :'+str(toc)+'\n Profite : '+str(profite))
+				file.write('\n ############# '+'\n Name = '+str(lo)+'\nCarlio PRICE => '+str(row[0][1])+'\n Tier : '+str(self.tr)+'\n Ench : '+str(self.eh)+'\n Price :'+str(toc)+'\n Profite : '+str(profite))
 				file.close()
 				time.sleep(1)
+				if profite >=10000:
+					print(profite) 
+					print('Go get this First !!!')
+					sys.exit()
 				# self.sell()
 			print('The Profite: '+str(profite))
 			print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
 	def tier(self):
 		# x=gui.locateOnScreen('img/all_btn.png')
 		# y=gui.center(x)
-		
-		try:
 			y =(508,220)
 			tiers=[4,5,6,7,8]
 			for i in range(0,5):
@@ -93,12 +105,10 @@ class prof:
 				gui.click('../bm/t'+str(tiers[i])+'.png')
 				self.tr =tiers[i]
 				self.eh=0
-				time.sleep(0.5)#1
-				print('iiiii')
+				time.sleep(1)#1
+				print('Tier ===> '+str(self.tr))
 				self.ech()
-		except:
-			print("error")
-			pass
+
 	def ech(self):
 		# x=gui.locateOnScreen('../bm/e0.png')
 		
@@ -117,7 +127,7 @@ class prof:
 			gui.click('../bm/'+str(ench[i])+'.png')
 			gui.moveTo(250,200)
 			time.sleep(0.5)#1
-		gui.click(y.x,y.y)
+		gui.click(y[0],y[1])
 		time.sleep(0.05)#0.2
 		gui.moveTo(250, 200)
 		gui.click('../bm/0_e.png')
@@ -128,4 +138,7 @@ class prof:
 		print("Sold !!")
 # cc.item()
 issam=prof()
-issam.tier()
+items=['hunter Shoes','spirithunter']
+for i in items:
+	cc.item(i,1)
+	issam.tier()
